@@ -1,0 +1,68 @@
+# Python
+*.py[cod]
+*$py.class
+*.so
+__pycache__/
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# Data files
+*.csv
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+data/
+datasets/
+raw_data/
+
+# Model files
+*.pth
+*.pt
+*.ckpt
+*.pb
+*.onnx
+saved_models/
+checkpoints/
+
+# Logs
+*.log
+logs/
+tensorboard/
+runs/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Large files
+*.zip
+*.tar.gz
+*.rar
