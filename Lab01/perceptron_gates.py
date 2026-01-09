@@ -5,6 +5,7 @@ A perceptron is a simple binary classifier that can learn linearly separable pat
 
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 class Perceptron:
     """
@@ -237,20 +238,20 @@ print("="*70)
 
 # Plot AND gate
 plot_decision_boundary(X_and, y_and, perceptron_and, 'AND Gate - Perceptron Decision Boundary')
-plt.savefig('/home/runner/work/Deep-Learning/Deep-Learning/Lab01/and_gate_boundary.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(os.path.dirname(__file__), 'and_gate_boundary.png'), dpi=150, bbox_inches='tight')
 print("\n✓ AND gate decision boundary saved as 'and_gate_boundary.png'")
 
 plot_training_errors(perceptron_and.errors, 'AND Gate - Training Errors')
-plt.savefig('/home/runner/work/Deep-Learning/Deep-Learning/Lab01/and_gate_errors.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(os.path.dirname(__file__), 'and_gate_errors.png'), dpi=150, bbox_inches='tight')
 print("✓ AND gate training errors saved as 'and_gate_errors.png'")
 
 # Plot OR gate
 plot_decision_boundary(X_or, y_or, perceptron_or, 'OR Gate - Perceptron Decision Boundary')
-plt.savefig('/home/runner/work/Deep-Learning/Deep-Learning/Lab01/or_gate_boundary.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(os.path.dirname(__file__), 'or_gate_boundary.png'), dpi=150, bbox_inches='tight')
 print("✓ OR gate decision boundary saved as 'or_gate_boundary.png'")
 
 plot_training_errors(perceptron_or.errors, 'OR Gate - Training Errors')
-plt.savefig('/home/runner/work/Deep-Learning/Deep-Learning/Lab01/or_gate_errors.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(os.path.dirname(__file__), 'or_gate_errors.png'), dpi=150, bbox_inches='tight')
 print("✓ OR gate training errors saved as 'or_gate_errors.png'")
 
 print("\n" + "="*70)

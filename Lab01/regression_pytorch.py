@@ -9,6 +9,7 @@ import torch.optim as optim
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
@@ -16,6 +17,13 @@ from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 # Set random seed for reproducibility
 torch.manual_seed(42)
 np.random.seed(42)
+
+# Constants for synthetic data generation
+BASE_PRICE = 100000
+AREA_FACTOR = 150
+BEDROOM_BONUS = 25000
+AGE_PENALTY = 1000
+PRICE_NOISE_STD = 20000
 
 # ============================================================================
 # DATA LOADING AND PREPROCESSING
@@ -27,8 +35,11 @@ print("="*70)
 
 # Load dataset
 print("\nLoading dataset...")
+script_dir = os.path.dirname(__file__)
+data_path = os.path.join(script_dir, 'house_price_full+(2) - house_price_full+(2).csv')
+
 try:
-    df = pd.read_csv('/home/runner/work/Deep-Learning/Deep-Learning/Lab01/house_price_full+(2) - house_price_full+(2).csv')
+    df = pd.read_csv(data_path)
     print(f"✓ Dataset loaded successfully!")
     print(f"  Shape: {df.shape}")
     print(f"  Columns: {list(df.columns)}")
@@ -47,8 +58,8 @@ except Exception as e:
     
     # Target: price (with some noise)
     # Simple formula: price = base + area_factor * area + bedroom_bonus * bedrooms - age_penalty * age
-    price = (100000 + 150 * area + 25000 * bedrooms - 1000 * age + 
-             np.random.normal(0, 20000, n_samples))
+    price = (BASE_PRICE + AREA_FACTOR * area + BEDROOM_BONUS * bedrooms - 
+             AGE_PENALTY * age + np.random.normal(0, PRICE_NOISE_STD, n_samples))
     
     df = pd.DataFrame({
         'Area': area,
@@ -280,7 +291,7 @@ plt.legend(fontsize=10)
 plt.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig('/home/runner/work/Deep-Learning/Deep-Learning/Lab01/regression_training_history.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(script_dir, 'regression_training_history.png'), dpi=150, bbox_inches='tight')
 print("\n✓ Training history saved as 'regression_training_history.png'")
 
 # Plot 3: Actual vs Predicted (Test Set)
@@ -306,7 +317,7 @@ plt.title('Residual Plot', fontsize=14, fontweight='bold')
 plt.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig('/home/runner/work/Deep-Learning/Deep-Learning/Lab01/regression_predictions.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(script_dir, 'regression_predictions.png'), dpi=150, bbox_inches='tight')
 print("✓ Prediction plots saved as 'regression_predictions.png'")
 
 # Plot 5: Distribution of Predictions
@@ -319,7 +330,7 @@ plt.title('Distribution of Actual vs Predicted Prices', fontsize=14, fontweight=
 plt.legend(fontsize=10)
 plt.grid(True, alpha=0.3, axis='y')
 plt.tight_layout()
-plt.savefig('/home/runner/work/Deep-Learning/Deep-Learning/Lab01/regression_distribution.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(script_dir, 'regression_distribution.png'), dpi=150, bbox_inches='tight')
 print("✓ Distribution plot saved as 'regression_distribution.png'")
 
 # ============================================================================
@@ -332,7 +343,7 @@ torch.save({
     'scaler_X_scale': scaler_X.scale_,
     'scaler_y_mean': scaler_y.mean_,
     'scaler_y_scale': scaler_y.scale_,
-}, '/home/runner/work/Deep-Learning/Deep-Learning/Lab01/regression_model.pth')
+}, os.path.join(script_dir, 'regression_model.pth'))
 print("✓ Model and scalers saved as 'regression_model.pth'")
 
 print("\n" + "="*70)

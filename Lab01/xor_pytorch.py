@@ -8,6 +8,7 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 # Set random seed for reproducibility
 torch.manual_seed(42)
@@ -193,7 +194,7 @@ plt.grid(True, alpha=0.3)
 plt.ylim([0, 105])
 
 plt.tight_layout()
-plt.savefig('/home/runner/work/Deep-Learning/Deep-Learning/Lab01/xor_training_history.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(os.path.dirname(__file__), 'xor_training_history.png'), dpi=150, bbox_inches='tight')
 print("\n✓ Training history saved as 'xor_training_history.png'")
 
 # Plot 3: Decision Boundary
@@ -234,7 +235,7 @@ plt.title('XOR Problem - Neural Network Decision Boundary', fontsize=14, fontwei
 plt.legend(fontsize=10, loc='upper right')
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
-plt.savefig('/home/runner/work/Deep-Learning/Deep-Learning/Lab01/xor_decision_boundary.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(os.path.dirname(__file__), 'xor_decision_boundary.png'), dpi=150, bbox_inches='tight')
 print("✓ Decision boundary saved as 'xor_decision_boundary.png'")
 
 # Plot 4: Network Architecture Visualization
@@ -284,14 +285,14 @@ plt.title('XOR Neural Network Architecture', fontsize=14, fontweight='bold', pad
 plt.xlim(0, 1)
 plt.ylim(0, 1)
 plt.tight_layout()
-plt.savefig('/home/runner/work/Deep-Learning/Deep-Learning/Lab01/xor_architecture.png', dpi=150, bbox_inches='tight')
+plt.savefig(os.path.join(os.path.dirname(__file__), 'xor_architecture.png'), dpi=150, bbox_inches='tight')
 print("✓ Network architecture saved as 'xor_architecture.png'")
 
 # ============================================================================
 # SAVE MODEL
 # ============================================================================
 
-torch.save(model.state_dict(), '/home/runner/work/Deep-Learning/Deep-Learning/Lab01/xor_model.pth')
+torch.save(model.state_dict(), os.path.join(os.path.dirname(__file__), 'xor_model.pth'))
 print("✓ Model weights saved as 'xor_model.pth'")
 
 print("\n" + "="*70)
