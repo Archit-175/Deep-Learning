@@ -161,7 +161,11 @@ optimizers = [
 
 for opt_name, optimizer in optimizers:
     print(f"\n✓ {opt_name} optimizer configured successfully")
-    print(f"  Learning rate: {optimizer.learning_rate.numpy():.4f}")
+    try:
+        lr = optimizer.learning_rate.numpy() if hasattr(optimizer.learning_rate, 'numpy') else optimizer.learning_rate
+        print(f"  Learning rate: {lr:.4f}")
+    except:
+        print(f"  Learning rate: {optimizer.learning_rate}")
 
 print("\n" + "="*60)
 print("All Tests Passed Successfully!")

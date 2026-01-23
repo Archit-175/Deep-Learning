@@ -167,7 +167,8 @@ def plot_history(histories, labels, title, save_name):
     plt.tight_layout()
     plt.savefig(save_name, dpi=100, bbox_inches='tight')
     print(f"✓ Plot saved: {save_name}")
-    plt.close()
+    # Clear the figure to free memory
+    plt.clf()
 
 
 def task1_activation_comparison(X_train_cnn, y_train_cat, X_test_cnn, y_test_cat):
