@@ -93,13 +93,15 @@ def create_cnn_model(activation='relu', fc_units=128, dropout_rate=0.25, use_bn=
     return model
 
 
-def create_mlp_model(activation='relu', hidden_units=[256, 128], dropout_rate=0.0, use_bn=True):
+def create_mlp_model(activation='relu', hidden_units=None, dropout_rate=0.0, use_bn=True):
     """
     Create MLP model based on the base architecture:
     - Flatten (784)
     - Dense layers with BatchNormalization (optional)
     - Output Layer: 10 neurons (Softmax)
     """
+    if hidden_units is None:
+        hidden_units = [256, 128]
     model = models.Sequential([layers.Input(shape=(784,))])
     
     for units in hidden_units:

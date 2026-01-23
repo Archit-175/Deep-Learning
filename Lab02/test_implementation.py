@@ -88,8 +88,10 @@ print("\n" + "="*60)
 print("Testing MLP Model Architecture")
 print("="*60)
 
-def create_mlp_model(activation='relu', hidden_units=[256, 128], dropout_rate=0.0, use_bn=True):
+def create_mlp_model(activation='relu', hidden_units=None, dropout_rate=0.0, use_bn=True):
     """Create MLP model"""
+    if hidden_units is None:
+        hidden_units = [256, 128]
     model = models.Sequential([layers.Input(shape=(784,))])
     
     for units in hidden_units:
