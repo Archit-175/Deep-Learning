@@ -12,13 +12,7 @@ Deep-Learning/
 ├── Lab01/          # Lab Assignment 1
 ├── Lab02/          # Lab Assignment 2
 ├── Lab03/          # Lab Assignment 3
-├── Lab04/          # Lab Assignment 4
-├── Lab05/          # Lab Assignment 5
-├── Lab06/          # Lab Assignment 6
-├── Lab07/          # Lab Assignment 7
-├── Lab08/          # Lab Assignment 8
-├── Lab09/          # Lab Assignment 9
-├── Lab10/          # Lab Assignment 10
+
 ├── requirements.txt # Python dependencies
 ├── .gitignore      # Git ignore patterns
 └── README.md       # This file
@@ -57,18 +51,6 @@ Each lab folder contains:
 - README.md with assignment description
 - Results and outputs
 - Any additional resources
-
-### Assignment Topics (Sample)
-- Lab01: Introduction to Neural Networks
-- Lab02: Activation Functions and Optimization
-- Lab03: Convolutional Neural Networks (CNNs)
-- Lab04: Recurrent Neural Networks (RNNs)
-- Lab05: Long Short-Term Memory (LSTM)
-- Lab06: Transfer Learning
-- Lab07: Autoencoders
-- Lab08: Generative Adversarial Networks (GANs)
-- Lab09: Natural Language Processing
-- Lab10: Advanced Deep Learning Techniques
 
 ## 💻 Usage
 
