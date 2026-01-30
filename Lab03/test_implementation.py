@@ -135,7 +135,7 @@ def main():
     print("\n" + "="*80)
     print("VALIDATION SUMMARY")
     print("="*80)
-    print(f"Models tested: {len(results)}/{len(results)} passed")
+    print(f"Models tested: {sum(results)}/{len(results)} passed")
     print(f"Loss functions: ✓ Passed")
     print(f"Data loading: {'✓ Passed' if data_ok else '✗ Failed'}")
     print(f"Training step: {'✓ Passed' if training_ok else '✗ Failed'}")

@@ -285,7 +285,7 @@ def get_mnist_loaders(batch_size=128):
         transforms.Resize((32, 32)),
         transforms.Grayscale(3),  # Convert to 3 channels
         transforms.ToTensor(),
-        transforms.Normalize((0.1307,), (0.3081,))
+        transforms.Normalize((0.1307, 0.1307, 0.1307), (0.3081, 0.3081, 0.3081))
     ])
     
     trainset = torchvision.datasets.MNIST(root='./data', train=True,
@@ -320,22 +320,29 @@ def train_model(model, trainloader, criterion, optimizer, epochs, device, model_
             
             optimizer.zero_grad()
             
-            # Forward pass - handle ArcFace differently
+            # Forward pass
+            outputs = model(inputs)
+            
+            # Handle ArcFace differently - it needs features, not outputs
             if isinstance(criterion, ArcFaceLoss):
+                # For ArcFace, we need to extract features before final layer
+                # This is a simplified version - in production, model should return features explicitly
                 if hasattr(model, 'fc'):
-                    # For ResNet-like models, get features before final layer
-                    features = model(inputs, return_features=True)[1] if hasattr(model.forward, '__code__') and 'return_features' in model.forward.__code__.co_varnames else model(inputs)
-                    if features.dim() == 1:
-                        features = features.unsqueeze(0)
+                    # For ResNet-like models with return_features support
+                    has_return_features = (
+                        hasattr(model.forward, '__code__') and 
+                        'return_features' in model.forward.__code__.co_varnames
+                    )
+                    if has_return_features:
+                        outputs, features = model(inputs, return_features=True)
+                        loss = criterion(features, labels)
+                    else:
+                        # Fallback: use output as features (not ideal but functional)
+                        loss = criterion(outputs, labels)
                 else:
-                    features = model(inputs)
-                loss = criterion(features, labels)
-                
-                # Get outputs for accuracy calculation
-                with torch.no_grad():
-                    outputs = model(inputs)
+                    # For other models, use the output
+                    loss = criterion(outputs, labels)
             else:
-                outputs = model(inputs)
                 loss = criterion(outputs, labels)
             
             loss.backward()
@@ -388,8 +395,9 @@ def extract_features(model, dataloader, device, num_samples=1000):
     labels_list = []
     
     with torch.no_grad():
+        samples_collected = 0
         for inputs, labels in dataloader:
-            if len(features_list) * inputs.size(0) >= num_samples:
+            if samples_collected >= num_samples:
                 break
             
             inputs = inputs.to(device)
@@ -421,6 +429,7 @@ def extract_features(model, dataloader, device, num_samples=1000):
             
             features_list.append(features.cpu().numpy())
             labels_list.append(labels.numpy())
+            samples_collected += inputs.size(0)
     
     features = np.concatenate(features_list, axis=0)[:num_samples]
     labels = np.concatenate(labels_list, axis=0)[:num_samples]
@@ -503,7 +512,7 @@ def main():
         
         # Setup loss function
         if exp['loss_name'] == 'BCE':
-            criterion = nn.CrossEntropyLoss()  # For multi-class, CE is more appropriate than BCE
+            criterion = nn.CrossEntropyLoss()  # Note: Using CrossEntropyLoss (multi-class version)
         elif exp['loss_name'] == 'Focal Loss':
             criterion = FocalLoss(alpha=1, gamma=2)
         elif exp['loss_name'] == 'ArcFace':
