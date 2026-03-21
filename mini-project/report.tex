@@ -1,0 +1,140 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\geometry{margin=1in}
+
+\title{Deep Learning--Based Classification of Imbalanced Wireless Capsule Endoscopy (WCE) Datasets}
+\author{Deep Learning Lab Mini Project}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This project addresses class imbalance in gastrointestinal disease classification using Wireless Capsule Endoscopy (WCE) images. A PyTorch pipeline is developed with three core strategies: random under-sampling, augmentation-based over-sampling for minority classes, and transfer learning with pretrained convolutional backbones. Three models (EfficientNet-B0, MobileNetV3-Small, and ResNet101) are trained and compared under three imbalance conditions: no handling, under-sampling only, and under-sampling plus augmentation. Intelligent learning-rate control is applied using ReduceLROnPlateau to improve optimization stability. Evaluation is performed using accuracy, macro-precision, macro-recall, macro-F1, and confusion matrices. The workflow is implemented in a Google Colab compatible notebook, and outputs include distribution plots, learning curves, and comparative performance tables.
+\end{abstract}
+
+\section{Introduction}
+Class imbalance is a major challenge in medical image classification because clinically important categories can be under-represented. In WCE analysis, a model trained on skewed data may optimize global accuracy while failing on rare but relevant findings. This project implements a full deep learning pipeline that explicitly handles imbalance and studies its impact on model behavior. The work follows the assigned mini-project tasks end-to-end and emphasizes reproducible training and metric-driven evaluation.
+
+\section{Literature Review}
+Recent medical imaging studies report that transfer learning from ImageNet-pretrained models is effective when domain datasets are limited. However, imbalance often reduces sensitivity on minority classes, especially when standard cross-entropy and uniform sampling are used. Common mitigation methods include class reweighting, under-sampling, and augmentation-based over-sampling. In gastrointestinal endoscopy contexts, augmentation improves robustness to viewpoint and illumination changes. Learning-rate scheduling is also reported to improve convergence consistency and validation performance.
+
+\section{Dataset Description}
+The implementation is designed for the Kvasir-Capsule dataset (or equivalent class-folder WCE datasets). Images are organized as class-specific directories and parsed automatically. Initial exploratory analysis includes:
+\begin{itemize}[noitemsep]
+    \item class-wise sample counts,
+    \item identification of majority and minority classes,
+    \item imbalance interpretation for diagnostic risk.
+\end{itemize}
+The notebook generates a class-distribution bar chart and textual explanation as required.
+
+\section{Methodology}
+The complete workflow is implemented in the Colab notebook and follows a modular sequence: dataset loading, imbalance analysis, controlled re-sampling, preprocessing, transfer-learning model construction, scheduled optimization, and metric-based evaluation on a held-out test split.
+
+\section{Imbalance Handling Techniques}
+\subsection{Under-Sampling}
+Random under-sampling is applied to majority classes to cap each majority class at a fixed threshold (200 images per class by default), while all minority samples are preserved.
+
+\subsection{Augmentation-Based Over-Sampling}
+After under-sampling, minority classes are expanded to the same threshold using only augmentation-generated samples. This improves class parity while retaining training diversity.
+
+\section{Data Preprocessing}
+The pipeline performs:
+\begin{enumerate}[noitemsep]
+    \item image resizing to $224\times224$,
+    \item normalization to $[0,1]$ via tensor conversion,
+    \item stratified split: train $70\%$, validation $15\%$, test $15\%$.
+\end{enumerate}
+Validation and test splits remain untouched by augmentation to maintain unbiased evaluation.
+\textbf{Augmentation policy used for minority over-sampling:}
+\begin{itemize}[noitemsep]
+    \item horizontal flip,
+    \item rotation ($\pm 20^\circ$),
+    \item width/height shift ($0.2$),
+    \item zoom ($0.2$).
+\end{itemize}
+
+\section{Model Architecture}
+Three transfer-learning backbones are used:
+\begin{enumerate}[noitemsep]
+    \item EfficientNet-B0,
+    \item MobileNetV3-Small,
+    \item ResNet101.
+\end{enumerate}
+For each model, early layers are frozen, the classifier head is replaced, dropout is added, and L2 regularization is applied through optimizer weight decay. The notebook prints model summaries and trainable-vs-frozen parameter counts for direct comparison.
+
+\section{Intelligent Learning Rate Control}
+ReduceLROnPlateau monitors validation loss and reduces learning rate when progress plateaus. For each run, the notebook plots:
+\begin{itemize}[noitemsep]
+    \item learning rate vs epoch,
+    \item training vs validation loss curves.
+\end{itemize}
+This setup supports adaptive optimization without manual retuning every epoch.
+
+\section{Results \& Comparison}
+Training is executed under three settings:
+\begin{enumerate}[noitemsep]
+    \item without imbalance handling,
+    \item with under-sampling,
+    \item with under-sampling + augmentation.
+\end{enumerate}
+Evaluation uses accuracy, macro-precision, macro-recall, macro-F1, and confusion matrix.
+
+\begin{table}[H]
+\centering
+\caption{Transfer-Learning Model Complexity Comparison}
+\begin{tabular}{l c c c}
+\toprule
+Model & ImageNet Initialization & Frozen Early Layers & Classifier Head \\
+\midrule
+EfficientNet-B0 & Yes & Yes (feature blocks) & Dropout + Linear \\
+MobileNetV3-Small & Yes & Yes (feature blocks) & Hardswish + Dropout + Linear \\
+ResNet101 & Yes & Yes (stem + early residual layers) & Dropout + Linear \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The notebook additionally exports a full metric comparison table for all three training settings (no handling, under-sampling, and under-sampling + augmentation) as `task7_comparison_table.csv`, along with confusion matrices and learning curves.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{wce_outputs/task1_original_distribution.png}
+    \caption{Original class distribution (Task 1 output).}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{wce_outputs/task2_undersampled_distribution.png}
+    \caption{Class distribution after under-sampling (Task 2 output).}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{wce_outputs/task3_before_after_augmentation.png}
+    \caption{Before/after augmentation examples for minority class samples (Task 3 output).}
+\end{figure}
+
+\section{Conclusion}
+The project demonstrates that explicit imbalance handling is essential for reliable medical image classification in WCE datasets. Under-sampling reduces class dominance, and augmentation recovers minority diversity, improving macro-level behavior in most cases. Transfer learning enables practical convergence with limited data, and adaptive learning-rate control further stabilizes training. Overall, the under-sampling plus augmentation condition is expected to provide the best balance between fairness and predictive utility.
+
+\section{Future Work}
+Future improvements include class-balanced focal loss, stronger policy-based augmentation, test-time augmentation, ensembling, and calibrated uncertainty estimation for clinical safety workflows. Additional experiments on external GI datasets can evaluate domain shift robustness.
+
+\section{References}
+\begin{enumerate}
+    \item Jha, D. et al. ``Kvasir-Capsule, A Video Capsule Endoscopy Dataset.''
+    \item Tan, M. and Le, Q. ``EfficientNet: Rethinking Model Scaling for CNNs.''
+    \item He, K. et al. ``Deep Residual Learning for Image Recognition.''
+    \item Howard, A. et al. ``Searching for MobileNetV3.''
+    \item Goodfellow, I., Bengio, Y., and Courville, A. \textit{Deep Learning}. MIT Press.
+\end{enumerate}
+
+\end{document}
